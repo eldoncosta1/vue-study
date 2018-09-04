@@ -1,0 +1,69 @@
+<html>
+<head>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <title>People</title>
+</head>
+<body>
+  <div class="container">
+
+    <div>
+      <h1>People of Gaul</h1>
+      <ul class="list-group">
+        <li v-for="(people, index) in orderedPeople" :key="index" class="list-group-item">
+        {{ people.name + ' => ' + people.age}}
+      </li>
+      </ul>
+    </div>
+    <button class="btn btn-default" @click="reverseOrder">Reverse order</button>
+    
+    <div>
+      <h1>"Old" People of Gaul</h1>
+      <ul class="list-group">
+        <li v-for="(people, index) in oldPeoples" :key="index" class="list-group-item">
+         {{ people.name + ' => ' + people.age  }}
+      </li>
+      </ul>
+    </div>
+
+  <pre>
+    {{ $data }}
+  </pre>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+<script type="text/javascript">
+
+  
+  new Vue({
+    el: '.container',
+    data: {
+      peoples: [
+      { name: "Joao", age: 50 },
+      { name: "Maria", age: 86 },
+      { name: "Tiago", age: 10 },
+      { name: "Pedro", age: 70 },
+      { name: "Marcos", age: 20 },
+      { name: "Paulo", age: 67 },
+      ],
+      order: 'desc'
+    },
+    methods: {
+      reverseOrder: function() {
+        this.order = (this.order === 'desc') ? 'asc' : 'desc'
+      }
+    },
+    computed: {
+      orderedPeople: function() {
+        var order = this.order;
+        return _.orderBy(this.peoples, 'age', [order]);
+      },
+      oldPeoples: function() {
+        return this.peoples.filter(function (item) {
+          return item.age > 65;
+        })
+      }
+    }
+  })
+</script>
+</html>

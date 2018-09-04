@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cauculadora</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+
+	<div class="container">
+		
+		<table class="table table-hover">
+
+			<tr v-for="candidate in candidates">
+				<td>{{ candidate.name }}</td>
+				<td>{{ candidate.votes }}</td>
+				<td><button class="btn btn-default" @click="addVote(candidate)">Vote</button></td>
+			</tr> 
+		</table>
+
+		<form class="form-inline">
+			<input @keyup.delete="clear" class="form-control"  placeholder="press 'delete' to reset ">
+			
+		</form>
+
+		<h1>Our mayor is {{ mayor.name }} </h1>
+		
+		
+		<pre>{{ $data }}</pre>
+	</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script type="text/javascript">
+	var data = {
+		candidates: [
+				{name: 'Julio Lossio', votes: Math.floor((Math.random() * 100) + 1)},
+				{name: 'Miguel Coelho', votes: Math.floor((Math.random() * 100) + 1)},				
+			],		
+	};
+	new Vue({
+			el: '.container',
+			data: data,
+			computed: {
+				mayor: function() {
+					var candidatesSorted = this.candidates.sort(function (a, b) {
+	                    return b.votes - a.votes;
+	                });
+					console.log(candidatesSorted);
+	                return candidatesSorted[0];
+				}
+			},
+			methods: {
+				addVote: function(mayor) {
+					//console.log(mayor.name, mayor.votes);
+					mayor.votes++;
+				},
+				clear: function() {
+					this.candidates = this.candidates.map(function (candidate) {
+						candidate.votes = 0;
+						return candidate;
+					})
+				}
+			}		
+	});
+
+</script>
+</html>

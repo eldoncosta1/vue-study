@@ -1,0 +1,135 @@
+<!DOCTYPE>
+<html>
+<head>	
+	<title>Hello Vue</title>
+
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container text-center">		
+		<h1>API</h1>
+		<table class="table table-striped">
+			<tr>
+				<th>#</th>
+				<th>Nome</th>
+				<th>E-mail</th>
+				<th>Votos</th>
+				<th>Ações</th>
+			</tr>
+			<tr></tr>
+			<tr v-for="people in peoples" is="person" :people="people"></tr>
+
+		</table>
+		
+		
+
+		<!-- displays all data within Vue instance filtered through JSON -->
+    	<pre>{{ $data }}</pre>
+	</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+<template id="template-people">
+	<tr>
+		<td>{{ people.id }}</td>
+		<td>{{ people.nome }}</td>
+		<td>{{ people.email }}</td>
+		<td>{{ people.votos }}</td>		
+		<td>
+			<div class="btn-group">
+				<button @click="adicionarVoto(people)" class="btn btn-primary">Votar</button>		
+				<button @click="removerPessoa(people)" class="btn btn-danger">Apagar</button>		
+				
+			</div>
+		</td>
+	</tr>
+</template>
+
+<script>
+
+	var host = 'http://localhost:8000';
+	
+
+
+	Vue.component('person', {
+		template: '#template-people',
+		props: ['people'],
+		methods: {
+			adicionarVoto: function(people) {
+				people.votos++;   
+				$.ajax({
+					url: host+'/api/user/'+people.id, 
+					type: 'PUT',
+					data: people,
+					timeout: 60000,
+		            beforeSend: function() {
+		               console.log("atualizando votos..");                     
+
+		            },
+		            success: function(response, textStatus){   
+		            	console.log(response);
+		            	 
+		        	       
+		            },
+		            error: function(jqXHR, textStatus, errorThrown){
+		               console.log("erro ao atualizar votos..", textStatus);   
+		               people.votos--;                    
+		            }
+				});
+				
+			},
+			removerPessoa: function(people) {
+				var index = vm.peoples.indexOf(people);
+				vm.peoples.splice(index, 1);
+				$.ajax({
+					url: host+'/api/user/'+people.id, 
+					type: 'DELETE',
+					data: people,
+					timeout: 60000,
+		            beforeSend: function() {
+		               console.log("apagando pessoa.");                     
+
+		            },
+		            success: function(response, textStatus){   
+		            	console.log(response);
+		            	 
+		        	       
+		            },
+		            error: function(jqXHR, textStatus, errorThrown){
+		               console.log("erro ao apagar pessoa..", textStatus);   
+		                                  
+		            }
+				});
+			}
+		}
+
+	});
+
+	var data = {
+		peoples: []
+	};
+
+	var vm = new Vue({
+		el: '.container',
+		data: data,
+		mounted: function(){
+			$.get('http://localhost:8000/api/user', function(data){
+				console.log(data);
+				vm.peoples = data;				
+			});
+		}
+				
+	})
+
+
+</script>
+
+
+
+</html>

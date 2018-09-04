@@ -1,0 +1,105 @@
+<!DOCTYPE>
+<html>
+<head>	
+	<title>Componentes Vue</title>
+
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">		
+		<h1>Horses</h1>
+
+		<div>
+				
+				<ul class="list-group">
+					<chariot v-for="(chariot, index) in carruagens" :key="index" 
+								:chariot="chariot" 
+								:current="current" @select="updateChariot">						
+					</chariot>
+					
+				</ul>
+
+		</div>        
+        
+        
+
+		<!-- displays all data within Vue instance filtered through JSON -->
+    	<pre>{{ $data }}</pre>
+	</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+
+<template id="chariot-template">
+	<li class="list-group-item">
+		<p>{{ chariot.nome }}, quantidade de cavalos: {{ chariot.horses }}</p>
+		<button class="btn btn-primary" @click="rideChariot(chariot)" :disabled="isCurrent">{{ action }}</button>
+	</li>
+</template>
+<script>
+
+
+	Vue.component('chariot', {
+		template: '#chariot-template',
+		props: ['chariot', 'current'],	
+		methods: {
+			rideChariot: function(chariot) {
+				this.$emit('select', chariot);
+			}
+		},
+		computed: {
+			hasMoreHorses: function() {
+				return this.current.horses < this.chariot.horses;
+			},
+			isCurrent: function(){
+				return this.current.nome === this.chariot.nome;
+			},
+			noChariot: function() {
+				return this.current.nome === null;
+			},
+			action: function() {
+				var action;				
+				if(this.noChariot) {
+					action = 'Pick Chariot';
+				}else if(this.isCurrent) {
+					action = 'Riding';
+				}else if(this.hasMoreHorses) {
+					action = 'Hire Horses';
+				}else{
+					action = 'Dismiss Horses';
+				}
+
+				return action;
+			}
+		}
+	});
+
+	var data = {
+		carruagens: 
+		[
+			{ nome:'Carruagem 01', horses: 1},
+			{ nome:'Carruagem 02', horses: 2},
+			{ nome:'Carruagem 03', horses: 3},
+			{ nome:'Carruagem 04', horses: 4},
+		]
+		,
+		current: { nome: null, horses: 0}
+	};
+	new Vue({
+		el: '.container',
+		data: data,
+		methods: {
+			updateChariot: function(chariot) {
+				this.current = chariot;
+			}
+		}
+		
+
+		
+	})
+</script>
+
+</html>

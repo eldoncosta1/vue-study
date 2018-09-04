@@ -1,0 +1,113 @@
+<!DOCTYPE>
+<html>
+<head>	
+	<title>Hello Vue</title>
+
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container">
+
+		<h1>Hello 
+			<span v-show="genero == 'masculino'">Sr. {{nome}} </span>
+			<span v-show="genero == 'feminino'">Sra. {{nome}} </span>
+
+		</h1>		
+		
+		<input v-model="nome" placeholder="nome">
+		<input v-model="genero" placeholder="genero">
+
+		<div>
+			<h1>The multiplication table of 4</h1>
+			<ul class="list-group">
+				<li v-for="i in 11" class="list-group-item">
+					{{ i-1 }} x 4 = {{ (i-1) * 4 }}
+				</li>
+			</ul>			
+		</div>
+
+		<div>
+			<h1>Let's hear some stories!</h1>
+			<div>
+				
+				<h3>Alex's stories</h3>
+				<ul class="list-group">
+				<li v-for="(story, index) in storiesBy('Alex')" class="list-group-item">
+					{{index+1}}- {{ story.plot }} <b>said</b> "{{ story.write }}"
+				</li>
+			</ul>
+				
+			</div>
+			<h3>Jose's stories</h3>
+			<ul class="list-group">
+				<li v-for="(story, index) in storiesBy('Jose')" class="list-group-item">
+					{{index+1}}- {{ story.plot }} <b>said</b> "{{ story.write }}"
+				</li>
+			</ul>
+		</div>
+
+		  <button class="btn btn-default" v-on:click="reverseOrder">Reverse Order</button>
+
+
+		<button @click="upvote">
+			Upvotes! {{upvotes}}
+		</button>
+		
+
+		<!-- displays all data within Vue instance filtered through JSON -->
+    	<pre>{{ $data }}</pre>
+	</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+<script>
+	var data = {
+		nome: '',
+		genero: '',
+		stories: [
+			{
+				plot: "I crashed my car today",
+				write: "Alex",
+				upvotes: 47
+			},
+			{
+				plot: "Yesterday, someone stole my bag",
+				write: "Jose",
+				upvotes: 8
+			},
+			{
+				plot: "Someone ate my chocolate",
+				write: "Alex",
+				upvotes: 51
+			}
+			
+		],
+		upvotes: 0
+	};
+
+	new Vue({
+		el: '.container',
+		data: data,
+		methods: {
+			upvote: function() {
+				this.upvotes++;
+			},
+			storiesBy: function(writer) {
+				return this.stories.filter(function (story) {
+					return story.write === writer;
+				})
+			},
+			reverseOrder: function() {
+				this.order = (this.order === 'desc') ? 'asc' : 'desc'
+			}
+		},
+		computed: {
+			orderedStories: function() {
+				return _.orderBy(this.stories, 'upvotes', [order])
+			}
+		}
+	})
+</script>
+
+</html>

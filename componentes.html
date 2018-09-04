@@ -1,0 +1,125 @@
+<!DOCTYPE>
+<html>
+<head>	
+	<title>Componentes Vue</title>
+
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+	<div class="container">		
+		<h1>Lets hear some stories</h1>
+
+		<div>
+				<h3> Alex's stories </h3>
+				<ul class="list-group">
+					<!-- <li v-for="story in storiesBy('Alex')" class="list-group-item">
+						{{ story.writer }} said {{ story.plot }}
+					</li> -->
+					<story v-for="story in storiesBy('Alex')" :story="story"></story>
+				</ul>
+
+				<h3> John's stories </h3>
+				<ul class="list-group">
+					<!-- <li v-for="story in storiesBy('John')" class="list-group-item">
+						{{ story.writer }} said {{ story.plot }}
+					</li> -->
+					<story v-for="story in storiesBy('Alex')" :story="story"></story>
+				</ul>
+
+		</div>
+
+		<h1>Let's hear some famous sotries! ({{ famous.length }})</h1>
+		<div>
+			<ul class="list-group">
+				<!-- <li v-for="story in famous" class="list-group-item">
+					{{ story.writer }} said {{ story.plot }}
+				</li> -->
+				<story v-for="story in famous" :story="story"></story>
+			</ul>
+
+		</div>
+        
+        <div class="form-group">
+        	<label>What are you looking for?</label>
+        	<input v-model="query" class="form-control">
+        </div>
+        <h3>Search results:</h3>
+        <ul class="list-group">
+        	<!-- <li v-for="story in search" class="list-group-item">
+        		{{ story.writer }} said "{{ story.plot }}"
+        	</li> -->
+        	<story v-for="story in search" :story="story"></story>
+        </ul>
+        
+
+		<!-- displays all data within Vue instance filtered through JSON -->
+    	<pre>{{ $data }}</pre>
+	</div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+
+<template id="story-template">
+	<li class="list-group-item">{{ story.writer }} said "{{ story.plot }}"</li>
+</template>
+<script>
+	Vue.component('story', {
+		props: ['story'],
+		template: '#story-template'
+	});
+
+	var data = {
+		stories: [
+			{
+				plot: "I crashed my car today",
+				writer: "Alex",
+				upvotes: 20
+			},
+			{
+				plot: "Yesterday, someone stole my bag",
+				writer: "John",
+				upvotes: 30
+			},
+			{
+				plot: "Someone ate my chocolate",
+				writer: "Alex",
+				upvotes: 51
+			},
+			{
+				plot: "Yeshua is good all the time",
+				writer: "John",
+				upvotes: 50
+			}
+			
+		],
+		query: ''
+	};
+	new Vue({
+		el: '.container',
+		data: data,
+		methods: {
+			storiesBy: function(writer) {
+				return this.stories.filter(function (story) {
+					return story.writer === writer;
+				})
+			}
+		},
+		computed: {
+			famous: function() {
+				return this.stories.filter(function(item) {
+					return item.upvotes > 25;
+				})
+			},
+			search: function() {
+				var query = this.query;
+				return this.stories.filter(function (story) {
+					return story.plot.includes(query);
+				})
+			}
+		}
+		
+	})
+</script>
+
+</html>
